@@ -25,16 +25,16 @@ void solve()
     int n, m;
     cin >> n >> m;
     int LOG = log2(n) + 2;
-    vvi st(n + 1, vi(LOG));
+    vvi f(n + 1, vi(LOG));
     for (int i = 1; i <= n; i++)
     {
-        cin >> st[i][0];
+        cin >> f[i][0];
     }
     for (int j = 1; j < LOG; j++)
     {
         for (int i = 1; i + (1 << j) - 1 <= n; i++)
         {
-            st[i][j] = max(st[i][j - 1], st[i + (1 << j - 1)][j - 1]);
+            f[i][j] = max(f[i][j - 1], f[i + (1 << j - 1)][j - 1]);
         }
     }
     while (m--)
@@ -42,7 +42,7 @@ void solve()
         int l, r;
         cin >> l >> r;
         int len = log2(r - l + 1);
-        cout << max(st[l][len], st[r - (1 << len) + 1][len]) << '\n';
+        cout << max(f[l][len], f[r - (1 << len) + 1][len]) << '\n';
     }
 }
 
