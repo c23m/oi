@@ -99,23 +99,7 @@
 
 ### 已掌握内容
 - STL
-  - 容器
-    - priority_queue
-    - map / unordered_map
-    - set / unordered_set
-    - pair
-  - 方法
-    - sort
-    - lower_bound
 - 常见思想
-  - 二分答案
-  - 双指针
-  - 前缀和
-  - 差分
-  - 贪心
-  - 枚举
-  - 位运算
-  - 倍增
 - 数据结构
   - 栈
   - 队列

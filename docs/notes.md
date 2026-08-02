@@ -11,7 +11,8 @@
   - [数据结构](#数据结构)
     - [并查集](#并查集)
     - [ST表](#st表)
-    - [单调栈（下一个更大元素）](#单调栈下一个更大元素)
+    - [单调栈](#单调栈)
+    - [单调队列](#单调队列)
     - [树状数组](#树状数组)
   - [图论](#图论)
     - [DFS](#dfs)
@@ -257,96 +258,134 @@ int idx = lower_bound(temp.begin(), temp.end(), x) - temp.begin();
 ## 数据结构
 
 ### 并查集
+这是带节点权值的版本。
 ```cpp
 struct DSU {
-    vi fa;
+    vector<int> fa;
+    vector<int> sum;
 
-    //连通块的节点权值和:
-    //vector<int> sum;
-
-    DSU(int n) {
-        fa.resize(n + 1);
-        for (int i = 0; i <= n; ++i) fa[i] = i;
-
-        // 维护大小则a[i] = 1
-        // for (int i = 0; i <= n; ++i) sum[i] = a[i];
+    DSU(vector<int>& arr) {
+        int n = arr.size();
+        fa.resize(n);
+        sum.resize(n);
+        for (int i = 0; i < n; i++){
+            fa[i] = i;
+            sum[i] = arr[i];
+        }
     }
     int find(int u) {
-        if(fa[u] == u) return u;
+        if(fa[u] == u)
+            return u;
         return fa[u] = find(fa[u]);
     }
     void unite(int u, int v) {
-        int ru = find(u), rv = find(v);
-        if (ru == rv) return;
+        int ru = find(u)
+        int rv = find(v);
+        if (ru == rv)
+            return;
         fa[rv] = ru;
-        //sum[ru] += sum[rv];
+        sum[ru] += sum[rv];
     }
-    //int getsum(int u){
-    //     return sum[find(u)];
-    //}
+    int getSum(int u){
+         return sum[find(u)];
+    }
 };
 ```
 
 ### ST表
 本代码用于求区间最大值。
 ```cpp
-int LOG = log2(n) + 2;
-vector<vector<int>> f(n + 1, vector<int>(LOG));
-for (int i = 1; i <= n; i++)
-{
-    cin >> f[i][0];
-}
-for (int j = 1; j < LOG; j++)
-{
-    for (int i = 1; i + (1 << j) - 1 <= n; i++)
-    {
-        f[i][j] = max(f[i][j - 1], f[i + (1 << j - 1)][j - 1]);
+struct STTable{
+    int n, LOG;
+    vector<vector<int>> f;
+    STTable(vector<int>& nums){
+        n = nums.size();
+        LOG = log2(n) + 2;
+        f.assign(n, vector<int>(LOG));
+        for (int i = 0; i < n; i++)
+        {
+            f[i][0] = nums[i];
+        }
+        for (int j = 1; j < LOG; j++)
+        {
+            for (int i = 0; i + (1 << j) - 1 < n; i++)
+            {
+                f[i][j] = max(f[i][j - 1], f[i + (1 << j - 1)][j - 1]);
+            }
+        }
     }
-}
-
-// 查询[l,r]区间最大值
-int s = log2(r - l + 1);
-cout << max(f[l][s], f[r - (1 << s) + 1][s]) << '\n';
+    int query(int l, int r){
+        int s = log2(r - l + 1);
+        return max(f[l][s], f[r - (1 << s) + 1][s]);
+    }
+};
 ```
 
-### 单调栈（下一个更大元素）
+### 单调栈
+下一个更大元素
 ```cpp
-vector<int> nums;
-vector<int> next(n, -1);
-stack<int> st;
-for (int i=0; i<n; ++i) {
-    while (!st.empty() && nums[st.top()] < nums[i]) {
-        next[st.top()] = i;
-        st.pop();
+vector<int> nextLarger(vector<int>& nums){
+    int n = nums.size();
+    vector<int> next(n, -1);
+    stack<int> st;
+    for (int i = 0; i<n; ++i) {
+        while (!st.empty() && nums[st.top()] < nums[i]) {
+            next[st.top()] = i;
+            st.pop();
+        }
+        st.push(i);
     }
-    st.push(i);
+    return next;
+}
+```
+
+### 单调队列
+固定长度区间的最大值
+```cpp
+vector<int> intervalMaximum(vector<int>& nums, int k){
+    int n = nums.size();
+    deque<int> dq;
+    for(int i = 0; i < n; i++){
+
+    }
 }
 ```
 
 ### 树状数组
 用于单点修改, 区间查询
 ```cpp
-vector<int> bit(n+1, 0);
-
-void add(int i, int x) { // a[i] += x
-    while(i <= n) {
-        bit[i] += x;
-        i += i & -i;
+struct FenwickTree // 1-base
+{
+    vector<int> bit;
+    int n;
+    FenwickTree(vector<int> &nums)
+    {
+        n = nums.size() - 1;
+        bit.resize(n);
+        for (int i = 1; i <= n; i++)
+        {
+            add(i, nums[i]);
+        }
     }
-}
-int pre_sum(int i) { // 前缀和
-    int res=0;
-    while(i > 0) {
-        res += bit[i];
-        i -= i & -i;
+    void add(int i, int x) // a_i += x
+    {
+        while (i <= n)
+        {
+            bit[i] += x;
+            i += i & -i;
+        }
     }
-    return res;
-}
-
-// 构造
-for (int i = 1; i <= n; i++) { 
-    add(i, a[i]);   // a[] 数据
-}
+    int prefixSum(int i) // 前缀和
+    {
+        int res = 0;
+        while (i > 0)
+        {
+            res += bit[i];
+            i -= i & -i;
+        }
+        return res;
+    }
+};
 
 // 区间修改 + 单点查询（差分树状数组）
 // 区间 [l,r] 加 c : add(l, c); add(r+1, -c);
