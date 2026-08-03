@@ -155,17 +155,16 @@
 
 ### 1. 排序
 
-| 算法签名                                                                               | 说明                      |
-| -------------------------------------------------------------------------------------- | ------------------------- |
-| `void sort(RandomIt first, RandomIt last[, Compare comp])`                             | 排序(默认升序)            |
-| `InputIt find(InputIt first, InputIt last, const T& val)`                              | 查找第一个等于 val 的元素 |
-| `InputIt find_if(InputIt first, InputIt last, UnaryPred p)`                            | 查找第一个满足 p 的元素   |
-| `bool binary_search(ForwardIt first, ForwardIt last, const T& val)`                    | 二分查找是否存在          |
-| `ForwardIt lower_bound(ForwardIt first, ForwardIt last, const T& val)`                 | 第一个 >= val             |
-| `ForwardIt upper_bound(ForwardIt first, ForwardIt last, const T& val)`                 | 第一个 > val              |
-| `pair<ForwardIt,ForwardIt> equal_range(ForwardIt first, ForwardIt last, const T& val)` | 等于 val 的区间           |
+| 算法签名                                                               | 说明                      |
+| ---------------------------------------------------------------------- | ------------------------- |
+| `void sort(RandomIt first, RandomIt last[, Compare comp])`             | 排序(默认升序)            |
+| `InputIt find(InputIt first, InputIt last, const T& val)`              | 查找第一个等于 val 的元素 |
+| `InputIt find_if(InputIt first, InputIt last, UnaryPred p)`            | 查找第一个满足 p 的元素   |
+| `bool binary_search(ForwardIt first, ForwardIt last, const T& val)`    | 二分查找是否存在          |
+| `ForwardIt lower_bound(ForwardIt first, ForwardIt last, const T& val)` | 第一个 >= val             |
+| `ForwardIt upper_bound(ForwardIt first, ForwardIt last, const T& val)` | 第一个 > val              |
 
-### 3. 修改与操作
+### 2. 修改与操作
 
 | 算法签名                                                          | 说明                              |
 | ----------------------------------------------------------------- | --------------------------------- |
@@ -174,7 +173,7 @@
 | `ForwardIt unique(ForwardIt first, ForwardIt last)`               | 移除连续重复元素                  |
 | `void reverse(BidirIt first, BidirIt last)`                       | 反转                              |
 
-### 4. 数值算法
+### 3. 数值算法
 
 | 算法签名                                            | 说明                 |
 | --------------------------------------------------- | -------------------- |

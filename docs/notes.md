@@ -1,36 +1,36 @@
 - [算法竞赛常用模板速查](#算法竞赛常用模板速查)
   - [模板](#模板)
-  - [示例](#示例)
-  - [二分答案](#二分答案)
-  - [前缀和与差分](#前缀和与差分)
-    - [1. 前缀和](#1-前缀和)
-    - [2. 二维前缀和](#2-二维前缀和)
-    - [3. 一维差分](#3-一维差分)
-  - [位运算常用](#位运算常用)
-  - [离散化](#离散化)
+  - [思想](#思想)
+    - [二分答案](#二分答案)
+    - [前缀和](#前缀和)
+    - [二维前缀和](#二维前缀和)
+    - [差分](#差分)
+    - [离散化](#离散化)
+    - [位运算常用](#位运算常用)
   - [数据结构](#数据结构)
     - [并查集](#并查集)
     - [ST表](#st表)
     - [单调栈](#单调栈)
     - [单调队列](#单调队列)
     - [树状数组](#树状数组)
+    - [线段树](#线段树)
   - [图论](#图论)
     - [DFS](#dfs)
     - [BFS](#bfs)
-    - [拓扑排序(Kahn)](#拓扑排序kahn)
+    - [拓扑排序（Kahn）](#拓扑排序kahn)
     - [Dijkstra](#dijkstra)
     - [Kruskal](#kruskal)
     - [LCA 倍增](#lca-倍增)
   - [动态规划](#动态规划)
-    - [1. 0‑1 背包](#1-01-背包)
-    - [2. 完全背包](#2-完全背包)
-    - [3. 多重背包](#3-多重背包)
-    - [4. 分组背包（每组最多选一个）](#4-分组背包每组最多选一个)
-    - [5. LIS（最长上升子序列，O(n log n)）](#5-lis最长上升子序列on-log-n)
-    - [6. 最大子段和（贪心 / DP）](#6-最大子段和贪心--dp)
+    - [背包](#背包)
+    - [0‑1 背包](#01-背包)
+    - [完全背包](#完全背包)
+    - [多重背包](#多重背包)
+    - [分组背包](#分组背包)
+    - [LIS（最长严格上升子序列）](#lis最长严格上升子序列)
+    - [最大子段和](#最大子段和)
   - [数论基础](#数论基础)
-    - [1. gcd](#1-gcd)
-    - [2. 快速幂](#2-快速幂)
+    - [快速幂](#快速幂)
   - [C++ STL使用](#c-stl使用)
     - [STL容器](#stl容器)
       - [通用容器方法](#通用容器方法)
@@ -56,38 +56,7 @@
 > 暂未完工。
 
 ## 模板
-标准版, 最大化可读性。
-```cpp
-#include <bits/stdc++.h>
-using namespace std;
-
-const int INF = 0x3f3f3f3f;
-const ll LINF = 0x3f3f3f3f3f3f3f3f;
-
-void solve()
-{
-
-}
-
-int main()
-{
-#ifdef LOCAL
-    freopen("in.txt", "r", stdin);
-    freopen("out.txt", "w", stdout);
-#endif
-
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-
-    int t = 1;
-    //cin >> t;
-    while (t--)
-        solve();
-    return 0;
-}
-```
----
-完全版，加入了很多宏。
+正式使用版本。
 ```cpp
 #include <bits/stdc++.h>
 
@@ -96,8 +65,9 @@ using namespace std;
 using ll = long long;
 using pii = pair<int, int>;
 using vi = vector<int>;
-using vll = vector<ll>;
 using vvi = vector<vector<int>>;
+
+#define int long long
 
 #define all(x) (x).begin(), (x).end()
 #define pb push_back
@@ -108,15 +78,16 @@ using vvi = vector<vector<int>>;
 #define debug(x)
 #endif
 
+const int N = 2e5 + 10;
 const int INF = 0x3f3f3f3f;
 const ll LINF = 0x3f3f3f3f3f3f3f3f;
+const ll MOD = 998244353;
 
 void solve()
 {
-
 }
 
-int main()
+signed main()
 {
 #ifdef LOCAL
     freopen("in.txt", "r", stdin);
@@ -125,152 +96,189 @@ int main()
 
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-
     int t = 1;
-    //cin >> t;
+    // cin >> t;
     while (t--)
         solve();
     return 0;
 }
 ```
 
-## 示例
+## 思想
 
-```cpp
-vector<int> v1;                         // 空vector
-vector<int> v2(10, 5);                  // 10个5
-vector<int> v3{1, 2, 3, 4};             // 列表初始化
-
-map<string, int> mp;                    // 空map
-mp["one"] = 1;                          // 插入
-
-// vector 添加/删除
-v1.push_back(100);
-v1.pop_back();
-v1.insert(v1.begin(), 99);
-v1.erase(v1.begin());
-
-// 遍历
-for (int x : v1) cout << x << " ";
-for (auto it = v1.begin(); it != v1.end(); ++it) cout << *it << " ";
-
-// map 查找
-if (mp.find("one") != mp.end()) {
-    cout << mp["one"];          // 使用[]再次访问
-}
-
-vector<int> a = {5, 2, 8, 1, 9};
-a.erase(unique(a.begin(), a.end()), a.end());     // 去重
-reverse(a.begin(), a.end());                      // 反转
-int sum = accumulate(a.begin(), a.end(), 0);      // 累加
-auto it = find(a.begin(), a.end(), 8);            // 查找
-if (it != a.end()) cout << *it;
-
-//排序
-sort(a.begin(), a.end());                     // 升序
-sort(a.begin(), a.end(), greater<int>());     // 降序
-sort(a.begin(), a.end(), [](int x, int y){ return x > y; });
-
-//二分查找
-int pos = lower_bound(a.begin(), a.end(), x) - a.begin(); // 第一个 >= x
-int pos = upper_bound(a.begin(), a.end(), x) - a.begin(); // 第一个 > x
-bool exist = binary_search(a.begin(), a.end(), x);
-```
-
-
-## 二分答案
-
+### 二分答案
+用于答案满足单调性的情况。
 ```cpp
 // 判断是否可行
-bool check(int x){...}
+bool check(int x);
 
-int l = 0, r = INF;
-while (l <= r) {
-    int mid = (l + r) / 2;
-    if (check(mid)) l = mid + 1;
-    else r = mid - 1;
+int maximumFeasible(int left, int right)
+{
+    while (left <= right)
+    {
+        int mid = (left + right) / 2;
+        if (check(mid))
+            left = mid + 1;
+        else
+            right = mid - 1;
+    }
+
+    return right;
 }
-```
-最大可行值为 `r` , 最小可行值为 `l`.  
 
+int minimumFeasible(int left, int right)
+{
+    while (left <= right)
+    {
+        int mid = (left + right) / 2;
+        if (check(mid))
+            right = mid - 1;
+        else
+            left = mid + 1;
+    }
 
-## 前缀和与差分
-本部分下标以1为起点。
-
-### 1. 前缀和
-用于静态下的区间和查询。
-区间[l, r]和 = pref[r] - pref[l-1]
-```cpp
-vector<int> nums(n+1);
-vector<int> pref(n+1);
-for (int i=1; i<=n; i++){
-    pref[i] = pref[i-1] + nums[i];
-}
-```
-### 2. 二维前缀和
-`(x1,y1)` 左上角, `(x2,y2)` 右下角的矩阵和 =   
-`pref[x2][y2] - pref[x1-1][y2] - pref[x2][y1-1] + pref[x1-1][y1-1]`
-```cpp
-vector<vector<int>> pref(n+1, vector<int>(m+1));
-for (int i=1; i<=n; i++)
-    for (int j=1; j<=m; j++)
-        pref[i][j] = pref[i-1][j] + pref[i][j-1] - pref[i-1][j-1] + pref[i][j];
-```
-### 3. 一维差分
-用于区间加，单点查.  
-对差分数组执行前缀和得到数据.
-```cpp
-vector<int> nums(n+1);
-vector<int> diff(n+1);
-for (int i=1; i<=n; i++)
-    diff[i] = nums[i] - nums[i-1];
-
-// 区间[l, r]的数据 += x
-void add(int l, int r, int x) {
-    d[l] += x;
-    if(r < n)
-        d[r+1] -= x;
+    return left;
 }
 ```
 
-## 位运算常用
+### 前缀和
+
+用于静态下的区间和查询。  
+> 本部分以下标1为起点。
+
 ```cpp
-(x >> k) & 1         // 取出第 k 位
-x | (1 << k)         // 第 k 位置 1
-x & ~(1 << k)        // 第 k 位置 0
-x & -x               // lowbit
-x & (x-1) == 0       // 判断是否为 2 的幂（x>0）
+vector<int> prefixSum(vector<int>& nums)
+{
+    int n = nums.size() - 1;
+    vector<int> pref(n + 1);
+
+    for (int i = 1; i <= n; i++)
+    {
+        pref[i] = pref[i - 1] + nums[i];
+    }
+
+    return pref;
+}
+
+int getSum(vector<int>& pref, int l, int r){
+    return pref[r] - pref[l - 1];
+}
 ```
 
-## 离散化
-```cpp
-vector<int> nums(n);
-vector<int> temp(nums);
-sort(temp.begin(), temp.end());
-temp.erase(unique(temp.begin(), temp.end()), temp.end());
+### 二维前缀和
 
-// 查询原值 x 对应的下标
-int idx = lower_bound(temp.begin(), temp.end(), x) - temp.begin();
+用于静态矩阵中的子矩阵和查询。
+
+```cpp
+vector<vector<int>> prefixSum2D(vector<vector<int>>& nums)
+{
+    int n = nums.size() - 1;
+    int m = nums[0].size() - 1;
+
+    vector<vector<int>> pref(n + 1, vector<int>(m + 1));
+
+    for (int i = 1; i <= n; i++)
+    {
+        for (int j = 1; j <= m; j++)
+        {
+            pref[i][j] = pref[i - 1][j] + pref[i][j - 1] - pref[i - 1][j - 1] + nums[i][j];
+        }
+    }
+
+    return pref;
+}
+
+vector<int> getSum(vector<vector<int>> pref, int x1, int y1, int x2, int y2){
+    return pref[x2][y2] - pref[x1 - 1][y2] - pref[x2][y1 - 1] + pref[x1 - 1][y1 - 1];
+}
 ```
 
----
+### 差分
+
+用于静态下的区间加和单点查询。
+
+```cpp
+vector<int> difference(vector<int>& nums)
+{
+    int n = nums.size() - 1;
+    vector<int> diff(n + 1);
+
+    for (int i = 1; i <= n; i++)
+    {
+        diff[i] = nums[i] - nums[i - 1];
+    }
+
+    return diff;
+}
+
+// 区间 [l, r] 的所有元素加 x
+void add(vector<int>& diff, int l, int r, int x)
+{
+    int n = diff.size() - 1;
+    diff[l] += x;
+    if (r < n)
+    {
+        diff[r + 1] -= x;
+    }
+}
+
+//恢复原数组
+vector<int> restore(vector<int>& diff)
+{
+    int n = diff.size() - 1;
+    vector<int> nums(n + 1);
+
+    for (int i = 1; i <= n; i++)
+    {
+        nums[i] = nums[i - 1] + diff[i];
+    }
+
+    return nums;
+}
+```
+
+### 离散化
+
+用于将数值较大或范围较分散的数据映射到连续的整数编号。
+
+```cpp
+unordered_map<int, int> discretize(vector<int> &nums)
+{
+    vector<int> tmp(nums);
+    sort(tmp.begin(), tmp.end());
+    tmp.erase(unique(tmp.begin(), tmp.end()), tmp.end());
+
+    unordered_map<int, int> disc;
+    for (int i = 0; i < tmp.size(); i++)
+    {
+        disc[tmp[i]] = i;
+    }
+
+    return disc;
+}
+```
+
+### 位运算常用
+
+- 取出 `x` 的第 `k` 位：`(x >> k) & 1`
+- 将 `x` 的第 `k` 位设置为 `1`：`x | (1 << k)`
+- 将 `x` 的第 `k` 位设置为 `0`：`x & ~(1 << k)`
+- 取最低位的 `1`：`x & -x`
+- 判断 `x`(x>0) 是否为 `2` 的幂：`(x & (x - 1)) == 0`
+
 
 ## 数据结构
 
 ### 并查集
-这是带节点权值的版本。
+这是最简单的版本。
 ```cpp
 struct DSU {
     vector<int> fa;
-    vector<int> sum;
 
-    DSU(vector<int>& arr) {
-        int n = arr.size();
+    DSU(int n) {
         fa.resize(n);
-        sum.resize(n);
         for (int i = 0; i < n; i++){
             fa[i] = i;
-            sum[i] = arr[i];
         }
     }
     int find(int u) {
@@ -279,15 +287,10 @@ struct DSU {
         return fa[u] = find(fa[u]);
     }
     void unite(int u, int v) {
-        int ru = find(u)
+        int ru = find(u);
         int rv = find(v);
-        if (ru == rv)
-            return;
+
         fa[rv] = ru;
-        sum[ru] += sum[rv];
-    }
-    int getSum(int u){
-         return sum[find(u)];
     }
 };
 ```
@@ -300,7 +303,7 @@ struct STTable{
     vector<vector<int>> f;
     STTable(vector<int>& nums){
         n = nums.size();
-        LOG = log2(n) + 2;
+        LOG = log2(n) + 1;
         f.assign(n, vector<int>(LOG));
         for (int i = 0; i < n; i++)
         {
@@ -326,48 +329,70 @@ struct STTable{
 ```cpp
 vector<int> nextLarger(vector<int>& nums){
     int n = nums.size();
-    vector<int> next(n, -1);
+    vector<int> nxt(n, -1);
     stack<int> st;
-    for (int i = 0; i<n; ++i) {
+    for (int i = 0; i<n; i++) {
         while (!st.empty() && nums[st.top()] < nums[i]) {
-            next[st.top()] = i;
+            nxt[st.top()] = i;
             st.pop();
         }
         st.push(i);
     }
-    return next;
+    return nxt;
 }
 ```
 
 ### 单调队列
 固定长度区间的最大值
 ```cpp
-vector<int> intervalMaximum(vector<int>& nums, int k){
+vector<int> intervalMaximum(vector<int> &nums, int k)
+{
     int n = nums.size();
+    vector<int> ans(n - k + 1);
     deque<int> dq;
-    for(int i = 0; i < n; i++){
-
+    for (int r = 0; r < n; r++)
+    {
+        while (!dq.empty() && nums[dq.back()] < nums[r])
+        {
+            dq.pop_back();
+        }
+        dq.push_back(r);
+        int l = r - k + 1;
+        if (l < 0)
+            continue;
+        if (dq.front() < l)
+            dq.pop_front();
+        ans[l] = nums[dq.front()];
     }
+    return ans;
 }
 ```
 
 ### 树状数组
 用于单点修改, 区间查询
+或区间修改，单点查询（差分）
 ```cpp
 struct FenwickTree // 1-base
 {
     vector<int> bit;
     int n;
-    FenwickTree(vector<int> &nums)
-    {
+    FenwickTree(vector<int> &nums, bool diff = false){ //diff=true: 改为差分模式
         n = nums.size() - 1;
-        bit.resize(n);
+        bit.resize(n + 1);
+
         for (int i = 1; i <= n; i++)
         {
-            add(i, nums[i]);
+            bit[i] += nums[i];
+            if(diff)
+                bit[i] -=  nums[i-1];
+            int nxt = i + (i & -i);
+            if (nxt <= n)
+            {
+                bit[nxt] += bit[i];
+            }
         }
     }
-    void add(int i, int x) // a_i += x
+    void add(int i, int x)
     {
         while (i <= n)
         {
@@ -375,7 +400,14 @@ struct FenwickTree // 1-base
             i += i & -i;
         }
     }
-    int prefixSum(int i) // 前缀和
+
+    void add(int l, int r, int x) // diff
+    {
+        add(l, x);
+        add(r + 1, -x);
+    }
+
+    int sum(int i)
     {
         int res = 0;
         while (i > 0)
@@ -385,252 +417,490 @@ struct FenwickTree // 1-base
         }
         return res;
     }
-};
 
-// 区间修改 + 单点查询（差分树状数组）
-// 区间 [l,r] 加 c : add(l, c); add(r+1, -c);
-// 单点查询: sum(x)
+    int query(int l, int r){
+        return sum(r) - sum(l-1);
+    }
+
+    int query(int i){ // diff
+        return sum(i);
+    }
+};
 ```
 
+### 线段树
+
+```cpp
+struct SegmentTree
+{
+    struct Node
+    {
+        int sum;
+        int l, r;
+        int lazyAdd;
+    };
+    // 1-based
+    int n;
+    vector<Node> tree;
+
+    SegmentTree(vector<int> &nums)
+    {
+        n = nums.size() - 1;
+        tree.resize(n * 4);
+        build(1, 1, n, nums);
+    }
+
+    void pull(int node)
+    {
+        tree[node].sum = tree[node * 2].sum + tree[node * 2 + 1].sum;
+    }
+
+    void apply(int node, int value)
+    {
+        tree[node].sum += (tree[node].r - tree[node].l + 1) * value;
+        tree[node].lazyAdd += value;
+    }
+
+    void push(int node)
+    {
+        if (tree[node].lazyAdd == 0 || tree[node].l == tree[node].r)
+            return;
+        apply(node * 2, tree[node].lazyAdd);
+        apply(node * 2 + 1, tree[node].lazyAdd);
+        tree[node].lazyAdd = 0;
+    }
+
+    void build(int node, int left, int right, vector<int> &nums)
+    {
+        if (left == right)
+        {
+            tree[node].sum = nums[left];
+            tree[node].l = left;
+            tree[node].r = right;
+            return;
+        }
+        int mid = (left + right) / 2;
+        tree[node].l = left;
+        tree[node].r = right;
+        build(node * 2, left, mid, nums);
+        build(node * 2 + 1, mid + 1, right, nums);
+        pull(node);
+    }
+
+    void update(int left, int right, int value, int node = 1)
+    {
+        if (left <= tree[node].l && tree[node].r <= right)
+        {
+            apply(node, value);
+            return;
+        }
+        push(node);
+        int mid = (tree[node].l + tree[node].r) / 2;
+        if (left <= mid)
+            update(left, right, value, node * 2);
+        if (right > mid)
+            update(left, right, value, node * 2 + 1);
+        pull(node);
+    }
+
+    int query(int left, int right, int node = 1)
+    {
+        if (left <= tree[node].l && tree[node].r <= right)
+            return tree[node].sum;
+        push(node);
+        int mid = (tree[node].l + tree[node].r) / 2;
+        int answer = 0;
+        if (left <= mid)
+            answer += query(left, right, node * 2);
+        if (right > mid)
+            answer += query(left, right, node * 2 + 1);
+        return answer;
+    }
+};
+```
 
 ## 图论
 
 ### DFS
+用于遍历图或求连通块。
 ```cpp
-vector<vector<int>> g;
-vector<char> vis;
-void dfs(int u) {
+void dfs(vector<vector<int>> &g, int u, vector<char> &vis)
+{
     vis[u] = true;
     for (int v : g[u])
+    {
         if (!vis[v])
-            dfs(v);
+            dfs(g, v, vis);
+    }
 }
 ```
 
 ### BFS
-求深度。
+用于求无权图中从起点出发的最短路径。
 ```cpp
-queue<int> q;
-vector<int> dist(n+1, -1);
-dist[1]=0;
-q.push(1);
-while (!q.empty()) {
-    int u = q.front();
-    q.pop();
-    for (int v : g[u])
-        if (dist[v]==-1) {
-            dist[v]=dist[u]+1;
-            q.push(v);
+vector<int> bfs(vector<vector<int>> &g, int s)
+{
+    queue<int> q;
+    vector<int> dist(g.size(), -1);
+
+    dist[s] = 0;
+    q.push(s);
+
+    while (!q.empty())
+    {
+        int u = q.front();
+        q.pop();
+
+        for (int v : g[u])
+        {
+            if (dist[v] == -1)
+            {
+                dist[v] = dist[u] + 1;
+                q.push(v);
+            }
         }
+    }
+
+    return dist;
 }
 ```
 
-### 拓扑排序(Kahn)
+### 拓扑排序（Kahn）
+用于有向图的拓扑排序，并可检测是否存在环。
 
 ```cpp
-vector<vector<int>> g(n+1);
-vector<int> indeg(n+1, 0);
-
-// 初始化入度
-for(int i = 1; i <= n; i++;){
-    for(int v : g[i]){
-        indeg[v]++;
+vector<int> topoSort(vector<vector<int>> &g)
+{
+    int n = g.size() - 1;
+    vector<int> indeg(n + 1);
+    for (int u = 1; u <= n; u++)
+    {
+        for (int v : g[u])
+        {
+            indeg[v]++;
+        }
     }
-}
 
-queue<int> q;
-for (int i=1; i<=n; i++){
-    if (indeg[i]==0)
-        q.push(i);
-}
-
-vector<int> topo;
-while (!q.empty()) {
-    int u = q.front();
-    q.pop();
-    topo.push_back(u);
-    for (int v : g[u]) {
-        indeg[v]--;
-        if (indeg[v]==0)
-            q.push(v);
+    queue<int> q;
+    for (int i = 1; i <= n; i++)
+    {
+        if (indeg[i] == 0)
+            q.push(i);
     }
+
+    vector<int> topo;
+    while (!q.empty())
+    {
+        int u = q.front();
+        q.pop();
+        topo.push_back(u);
+
+        for (int v : g[u])
+        {
+            indeg[v]--;
+            if (indeg[v] == 0)
+                q.push(v);
+        }
+    }
+
+    return topo;
 }
 ```
-topo.size() != n 则存在环. 
+`topo.size() != n` 则存在环. 
 
 ### Dijkstra
 
 单源最短路径
 ```cpp
 
-vector<vector<pii>> g(n+1);
-vll dist(n+1, INF);
+vector<int> dijkstra(vector<vector<pair<int, int>>> &g, int s)
+{
+    int n = g.size() - 1;
+    vector<int> dist(n+1, INF);
+    dist[s] = 0;
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    pq.push({0, s});
 
-// 起点k
-dist[k] = 0;
-priority_queue<pii, vector<pii>, greater<pii>> pq;
-pq.push({k, 0});
-while (!pq.empty()) {
-    auto [d,u] = pq.top(); pq.pop();
-    if (d != dist[u]) continue;
-    for (auto [v,w] : g[u]) {
-        if (dist[v] > d + w) {
-            dist[v] = d + w;
-            pq.push({dist[v], v});
+    while (!pq.empty()) {
+        auto [d, u] = pq.top();
+        pq.pop();
+
+        if (d != dist[u])
+            continue;
+        for (auto [v, w] : g[u]) {
+            if (dist[v] > d + w) {
+                dist[v] = d + w;
+                pq.push({dist[v], v});
+            }
         }
     }
+
+    return dist;
 }
 ```
 
 ### Kruskal
-参看[并查集](#并查集). 
+用于求无向图的最小生成树。  
+参看[并查集](#并查集)。
+
 ```cpp
-struct Edge { int u, v, w; };
-vector<Edge> edges;
-sort(edges.begin(), edges.end(), [](Edge a, Edge b) { return a.w < b.w; });
-DSU dsu(n);
-long long ans = 0, cnt = 0;
-for (auto [u,v,w] : edges) {
-    if (dsu.find(u) != dsu.find(v)) {
-        dsu.unite(u, v);
-        ans += w;
-        cnt++;
-        if (cnt == n-1) break;
+struct Edge
+{
+    int u, v, w;
+};
+
+pair<int, bool> kruskal(int n, vector<Edge> &edges)
+{
+    sort(edges.begin(), edges.end(), [](Edge a, Edge b)
+    {
+        return a.w < b.w;
+    });
+
+    DSU dsu(n);
+
+    int ans = 0;
+    int cnt = 0;
+
+    for (auto [u, v, w] : edges)
+    {
+        if (dsu.find(u) != dsu.find(v))
+        {
+            dsu.unite(u, v);
+            ans += w;
+            cnt++;
+
+            if (cnt == n - 1)
+                break;
+        }
     }
+
+    return {ans, cnt == n - 1};
 }
-// cnt == n-1 则成功
 ```
 
 ---
 
 ### LCA 倍增
-> 未验证
+
+用于查询树上两个节点的最近公共祖先。  
+预处理复杂度：`O(n log n)`。  
+单次查询复杂度：`O(log n)`。
+
 ```cpp
-const int LOG = log2(n)+1;
+struct LCA // 1-based
+{
+    int n, LOG;
+    vector<int> depth;
+    vector<vector<int>> f;
 
-// DFS 预处理
-void dfs(int u, vector<vector<int>>& g, vector<int>& depth, vector<vector<int>>& f) {
-    for (int v : g[u]) {
-        if (depth[v] != 0) {
-            f[v][0] = u;
+    LCA(vector<vector<int>> &g, int root = 1)
+    {
+        n = g.size() - 1;
+        LOG = log2(n) + 1;
+
+        depth.resize(n + 1);
+        f.assign(n + 1, vector<int>(LOG));
+
+        depth[root] = 1;
+        dfs(root, g);
+
+        for (int j = 1; j < LOG; j++)
+        {
+            for (int i = 1; i <= n; i++)
+            {
+                f[i][j] = f[f[i][j - 1]][j - 1];
+            }
+        }
+    }
+
+    void dfs(int u, vector<vector<int>> &g)
+    {
+        for (int v : g[u])
+        {
+            if (depth[v] != 0)
+                continue;
+
             depth[v] = depth[u] + 1;
-            dfs(v, g, depth, f);
+            f[v][0] = u;
+
+            dfs(v, g);
         }
     }
-}
 
-// LCA 查询
-int lca(int u, int v, vector<int>& depth, vector<vector<int>>& f) {
-    if (depth[u] < depth[v])
-        swap(u, v);
+    int query(int u, int v)
+    {
+        if (depth[u] < depth[v])
+            swap(u, v);
 
-    for (int j = LOG-1; j >= 0; j--) {
-        if (depth[f[u][j]] >= depth[v]) {
-            u = f[u][j];
+        for (int j = LOG - 1; j >= 0; j--)
+        {
+            if (depth[f[u][j]] >= depth[v])
+                u = f[u][j];
         }
-    }
-    if (u == v)
-        return u;
 
-    for (int j = LOG-1; j >= 0; j--) {
-        if (f[u][j] != f[v][j]) {
-            u = f[u][j];
-            v = f[v][j];
+        if (u == v)
+            return u;
+
+        for (int j = LOG - 1; j >= 0; j--)
+        {
+            if (f[u][j] != f[v][j])
+            {
+                u = f[u][j];
+                v = f[v][j];
+            }
         }
+
+        return f[u][0];
     }
-    return f[u][0];
-}
-
-vector<int> depth(n + 1, 0);//节点深度
-vector<vector<int>> f(n + 1, vector<int>(LOG, 0));
-//f[i][j] : 节点 i 向上跳 2^j 步到达的节点
-
-// 设 1 为根节点.
-depth[1] = 1;
-dfs(1, g, dep, f);
-
-// 构建倍增表
-for (int j = 1; j < LOG; ++j) {
-    for (int i = 1; i <= n; ++i) {
-        f[i][j] = f[f[i][j-1]][j-1];
-    }
-}
-
+};
 ```
 
 ## 动态规划
 
-### 1. 0‑1 背包
-```cpp
-vector<int> dp(C+1, 0); // C 为容量
-for (int i=1; i<=n; ++i)
-    for (int j=C; j>=w[i]; --j)
-        dp[j] = max(dp[j], dp[j-w[i]] + v[i]);
-```
+### 背包
 
-### 2. 完全背包
+### 0‑1 背包
 ```cpp
-for (int i=1; i<=n; ++i)
-    for (int j=w[i]; j<=C; ++j)
-        dp[j] = max(dp[j], dp[j-w[i]] + v[i]);
-```
 
-### 3. 多重背包
-```cpp
-// 将数量 k 拆分为 1,2,4,..., 剩余部分，转为 0‑1 背包
-vector<pii> items;// w, v
+int zeroOneKnapsack(vector<pair<int, int>> &items, int capacity)
+{
+    vector<int> dp(capacity + 1);
 
-for (int i = 0; i < n; i++) {
-    int k = 1;
-    int w,v,m;
-    cin >> w >> v >> m;//或用struct存
-    while (m >= k) {
-        items.push_back({w*k, v*k});
-        m -= k;
-        k *= 2;
+    for (auto [w, v] : items)
+    {
+        for (int j = capacity; j >= w; j--)
+        {
+            dp[j] = max(dp[j], dp[j - w] + v);
+        }
     }
-    if (m) {
-        items.push_back({w*m, v*m});
-    }
+
+    return dp[capacity];
 }
-// 然后对 cnt 个物品做 0‑1 背包
 ```
 
-### 4. 分组背包（每组最多选一个）
+### 完全背包
+每种物品可以选择任意次。
 ```cpp
-vector<vector<pii>> groups;//pii: w, val;
-vector<ll> dp(c+1, 0);
-for(auto & group : groups){// 循环每组
-    for(int j = c; j >= 0; j--){ // 容量倒序
-        for(auto & pr: group){// 组内物品
-            int w = pr.first, v = pr.second;
-            if(w <= j){
-                dp[j] = max(dp[j], dp[j-w] + v);
+int completeKnapsack(vector<pair<int, int>> &items, int capacity)
+{
+    vector<int> dp(capacity + 1);
+
+    for (auto [w, v] : items)
+    {
+        for (int j = w; j <= capacity; j++)
+        {
+            dp[j] = max(dp[j], dp[j - w] + v);
+        }
+    }
+
+    return dp[capacity];
+}
+```
+
+### 多重背包
+每种物品最多选择 `count` 次。
+```cpp
+struct Item
+{
+    int weight;
+    int value;
+    int count;
+};
+
+int multipleKnapsack(vector<Item> &items, int capacity)
+{
+    vector<pair<int, int>> splitItems;
+
+    for (auto [weight, value, count] : items)
+    {
+        int k = 1;
+
+        while (count >= k)
+        {
+            splitItems.push_back({weight * k, value * k});
+            count -= k;
+            k *= 2;
+        }
+
+        if (count > 0)
+        {
+            splitItems.push_back({weight * count, value * count});
+        }
+    }
+
+    vector<int> dp(capacity + 1);
+
+    for (auto [weight, value] : splitItems)
+    {
+        for (int j = capacity; j >= weight; j--)
+        {
+            dp[j] = max(dp[j], dp[j - weight] + value);
+        }
+    }
+
+    return dp[capacity];
+}
+```
+
+### 分组背包
+每组最多选择一个物品。
+```cpp
+int groupedKnapsack(vector<vector<pair<int, int>>> &groups, int capacity)
+{
+    vector<int> dp(capacity + 1);
+
+    for (auto &group : groups)
+    {
+        for (int j = capacity; j >= 0; j--)
+        {
+            for (auto [weight, value] : group)
+            {
+                if (weight <= j)
+                {
+                    dp[j] = max(dp[j], dp[j - weight] + value);
+                }
             }
         }
     }
+
+    return dp[capacity];
 }
 ```
 
-### 5. LIS（最长上升子序列，O(n log n)）
+### LIS（最长严格上升子序列）
+使用贪心和二分查找。  
+时间复杂度：`O(n log n)`。
 ```cpp
-vector<int> tails; // tails[i] 长度为 i+1 的上升子序列的末尾最小值
-for (int x : a) {
-    auto it = lower_bound(tails.begin(), tails.end(), x);
-    if (it == tails.end())
-        tails.push_back(x);
-    else
-        *it = x;
+int LIS(vector<int> &nums)
+{
+    vector<int> tails;
+    for (int x : nums)
+    {
+        auto it = lower_bound(tails.begin(), tails.end(), x);
+        if (it == tails.end())
+            tails.push_back(x);
+        else
+            *it = x;
+    }
+    return tails.size();
 }
-int ans = tails.size();
 ```
 
-### 6. 最大子段和（贪心 / DP）
+### 最大子段和
+时间复杂度：`O(n)`。
 ```cpp
-int cur = 0, mx = -1e9;
-for (int i=0; i<n; i++) {
-    cur = max(a[i], cur + a[i]);
-    mx = max(mx, cur);
+int kadane(vector<int> &nums)
+{
+    int current = nums[0];
+    int answer = nums[0];
+
+    for (int i = 1; i < nums.size(); i++)
+    {
+        current = max(nums[i], current + nums[i]);
+        answer = max(answer, current);
+    }
+
+    return answer;
 }
 ```
 
@@ -638,21 +908,15 @@ for (int i=0; i<n; i++) {
 
 ## 数论基础
 
-### 1. gcd
-```cpp
-int gcd(int a, int b) { return b == 0 ? a : gcd(b, a % b);}
-// 最小公倍数 lcm = a / gcd(a,b) * b
-```
+### 快速幂
+下面的算法求 $a^b \bmod p$ 的结果。
 
-### 2. 快速幂
-下面的算法求`a ^ b % p`的结果。
-
-x 的逆元为 `x ^ (p-2) % p`
+x 的逆元为 $x^{p-2} \bmod p$, 即 `qpow(x, p - 2, p)`
 ```cpp
 long long qpow(long long a, long long b, long long p) {
     long long res = 1;
     while (b > 0) {
-        if (b & 1){
+        if (b & 1) {
             res = res * a % p;
         }
         a = a * a % p;
