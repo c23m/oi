@@ -49,8 +49,7 @@ public:
     int count = 0;
     vector<Type> order;
     int position;
-    deque<Unit *> units;
-    deque<Unit *> *enemys;
+    bool reached = false;
     void init(Team team)
     {
         this->team = team;
@@ -59,22 +58,60 @@ public:
         {
             order = {iceman, lion, wolf, ninja, dragon};
             position = 0;
-            enemys = &solver.blueHome.units;
         }
         else
         {
             order = {lion, dragon, ninja, iceman, wolf};
             position = solver.n + 1;
-            enemys = &solver.redHome.units;
         }
     }
 
     void spawn()
     {
         Type current = order[count % 5];
-        if (elements >= solver.healths[current])
+        if (elements < solver.healths[current])
         {
+            if (team == red)
+            {
+                solver.redUnits.push_front(nullptr);
+                solver.redUnits.pop_back();
+            }
+            else
+            {
+                solver.blueUnits.push_back(nullptr);
+                solver.redUnits.pop_front();
+            }
+            return;
         }
+
+        elements -= solver.healths[current];
+        Unit *Obj;
+        switch (current)
+        {
+        case dragon:
+            Obj = new Dragon(team);
+        case ninja:
+            Obj = new Ninja(team);
+        case iceman:
+            Obj = new Iceman(team);
+        case lion:
+            Obj = new Lion(team);
+        case wolf:
+            Obj = new Wolf(team);
+        }
+        if (team == red)
+        {
+            solver.redUnits.push_front(Obj);
+            solver.redUnits.pop_back();
+        }
+        else
+        {
+            solver.blueUnits.push_back(Obj);
+            solver.redUnits.pop_front();
+        }
+        solver.outputTime();
+        Obj->outputInfo();
+        cout << "born" << '\n';
     }
 };
 
@@ -107,13 +144,61 @@ public:
     {
     }
 
+    void march()
+    {
+        if (team == red)
+            position++;
+        else
+            position--;
+        if (position == 0 || position == solver.n + 1)
+        {
+            solver.outputTime();
+            outputInfo();
+            cout << "reached ";
+            cout << (team == red ? "blue " : "red ");
+            cout << "headquarter ";
+            outputWith();
+            cout << '/n';
+            Headquarter &enemyHome = team == red ? solver.redHome : solver.blueHome;
+            if (!enemyHome.reached)
+            {
+                enemyHome.reached = true;
+            }
+            else
+            {
+                solver.outputTime();
+                cout << (team == red ? "blue " : "red ");
+                cout << "headquarter was taken";
+                cout << '/n';
+                solver.ending = true;
+            }
+        }
+        else
+        {
+            solver.outputTime();
+            outputInfo();
+            cout << "was killed ";
+            outputLocation();
+            cout << '/n';
+        }
+    }
+
     virtual void attack(Unit &enemy)
     {
+
         enemy.elements -= force;
         if (enemy.elements <= 0)
         {
             win = true;
             enemy.dead();
+            if (getType() == dragon)
+            {
+                static_cast<Dragon &>(*this).yell();
+            }
+        }
+        else
+        {
+            enemy.fightBack(*this);
         }
     }
 
@@ -124,10 +209,19 @@ public:
         {
             win = true;
         }
+        else if (enemy.getType() == dragon)
+        {
+            static_cast<Dragon &>(enemy).yell();
+        }
     }
 
     virtual void dead()
     {
+        solver.outputTime();
+        outputInfo();
+        cout << "was killed ";
+        outputLocation();
+        cout << '/n';
     }
 
     virtual void reward(int bonus)
@@ -136,6 +230,24 @@ public:
     }
 
     virtual Type getType() = 0;
+
+    void outputInfo()
+    {
+        vector<string> types =
+            {"dragon", "ninja", "iceman", "lion", "wolf"};
+        string teamStr = team == red ? "red " : "blue ";
+        cout << teamStr << types[getType()] << ' ' << id << ' ';
+    }
+
+    void outputWith()
+    {
+        cout << elements << ' ' << "elements and force " << force;
+    }
+
+    void outputLocation()
+    {
+        cout << "in city " << position << ' ';
+    }
 };
 
 class Dragon : public Unit
@@ -144,25 +256,81 @@ public:
     Dragon(Team team) : Unit(team, Type::dragon)
     {
     }
-    void reward(int bonus) override
+
+    void yell()
     {
+        solver.outputTime();
+        outputInfo();
+        cout << "yelled ";
+        outputLocation();
+        cout << '/n';
+    }
+
+    Type getType() override
+    {
+        return dragon;
     }
 };
 
 class Ninja : public Unit
 {
+public:
+    Ninja(Team team) : Unit(team, Type::ninja)
+    {
+    }
+
+    void fightBack(Unit &enemy) override
+    {
+        if (enemy.getType() == dragon)
+        {
+            static_cast<Dragon &>(enemy).yell();
+        }
+    }
+
+    Type getType() override
+    {
+        return ninja;
+    }
 };
 
 class Iceman : public Unit
 {
+public:
+    Iceman(Team team) : Unit(team, Type::iceman)
+    {
+    }
+
+    Type getType() override
+    {
+        return iceman;
+    }
 };
 
 class Lion : public Unit
 {
+public:
+    int originHp;
+    Lion(Team team) : Unit(team, Type::lion), originHp(elements)
+    {
+    }
+
+    Type getType() override
+    {
+        return lion;
+    }
 };
 
 class Wolf : public Unit
 {
+public:
+    Wolf(Team team) : Unit(team, Type::wolf)
+    {
+    }
+
+    Type getType() override
+    {
+        return wolf;
+    }
 };
 
 class Solution
@@ -175,12 +343,14 @@ public:
     Headquarter redHome;
     Headquarter blueHome;
 
+    deque<Unit *> redUnits;
     deque<Unit *> blueUnits;
 
     vector<City> citys;
     int hour = 0;
     int minute = 0;
 
+    bool ending = false;
     void init()
     {
         healths.resize(5);
@@ -199,7 +369,7 @@ public:
         blueHome.init(blue);
     }
 
-    bool nextTime()
+    void nextTime()
     {
         if (t - hour * 60 - minute >= 10)
         {
@@ -208,11 +378,10 @@ public:
             {
                 minute = 0;
                 hour++;
-                return true;
             }
         }
         else
-            return false;
+            ending = true;
     }
 
     void solve()
@@ -236,7 +405,8 @@ public:
         case 50:
             break;
         }
-        if (!nextTime())
+        nextTime();
+        if (ending)
         {
             return;
         }
